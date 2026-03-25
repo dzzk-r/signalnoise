@@ -90,8 +90,15 @@ def cmd_run(args: argparse.Namespace) -> int:
     hf_token = require_env("HF_TOKEN")
 
     home = Path.home()
-    name = input_path.stem
-    run_dir = home / "AI" / "systems" / "signalnoise" / "runs" / f"{now_stamp()}_{name}"
+    base_dir = Path(
+        os.environ.get(
+            "SIGNALNOISE_HOME",
+            str(home / "AI" / "systems" / "signalnoise"),
+        )
+    ).expanduser().resolve()
+
+name = input_path.stem
+run_dir = base_dir / "runs" / f"{now_stamp()}_{name}"
     output_dir = run_dir / "output"
     ensure_dir(output_dir)
 
