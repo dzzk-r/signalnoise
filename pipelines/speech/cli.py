@@ -69,16 +69,17 @@ def extract_dialogue_from_json(json_file: Path, output_file: Path) -> None:
             return
         print(f"[warn] jq extraction failed: {completed.stderr.strip()}", file=sys.stderr)
 
-    # Fallback without jq
-    data = json.loads(json_file.read_text(encoding="utf-8"))
-    segments = data.get("segments", [])
-    with output_file.open("w", encoding="utf-8") as out:
-        for seg in segments:
-            speaker = seg.get("speaker", "UNKNOWN")
-            start = seg.get("start", "")
-            end = seg.get("end", "")
-            text = seg.get("text", "")
-            out.write(f"{speaker} [{start}-{end}] {text}\n")
+        # Fallback without jq
+        data = json.loads(json_file.read_text(encoding="utf-8"))
+        segments = data.get("segments") or data.get("word_segments") or []
+        
+        with output_file.open("w", encoding="utf-8") as out:
+            for seg in segments:
+                speaker = seg.get("speaker", "UNKNOWN")
+                start = seg.get("start", "")
+                end = seg.get("end", "")
+                text = seg.get("text", "")
+                out.write(f"{speaker} [{start}-{end}] {text}\n")
 
 
 def cmd_run(args: argparse.Namespace) -> int:
