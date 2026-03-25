@@ -2,6 +2,19 @@
 
 > Extracting structured system knowledge from raw conversations.
 
+## Quick Start
+
+```sh
+  git clone https://github.com/dzzk-r/signalnoise.git
+  cd signalnoise
+
+  chmod +x pipelines/speech/run.sh
+  chmod +x pipelines/speech/postprocess.sh
+
+  # run pipeline
+  pipelines/speech/run.sh ~/Downloads/file.wav
+```
+
 ## Premise
 
 Important engineering knowledge is rarely born as documentation.
@@ -226,16 +239,22 @@ The goal is:
 
 ## Current Focus
 
+Current focus: batch speech processing.
+
+Planned extension:
+- real-time speech ingestion
+- streaming transcript generation
+
 The first working subsystem is:
 
 **Speech Processing Pipeline (WhisperX + Diarization)**
 
 This layer is already sufficient to:
 
-* normalize call recordings
-* transcribe multilingual audio
-* separate speakers
-* export structured transcript artifacts
+- normalize call recordings
+- transcribe multilingual audio
+- separate speakers
+- export structured transcript artifacts
 
 It serves as the operational foundation for the rest of the system.
 
