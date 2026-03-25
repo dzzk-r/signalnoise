@@ -1,4 +1,4 @@
-# file: pipelines/speech/cli.py
+# pipelines/speech/cli.py
 
 from __future__ import annotations
 
@@ -14,11 +14,11 @@ from pathlib import Path
 
 
 def run_cmd(
-        cmd: list[str],
-        *,
-        env: dict[str, str] | None = None,
-        stdout=None,
-        stderr=None,
+    cmd: list[str],
+    *,
+    env: dict[str, str] | None = None,
+    stdout=None,
+    stderr=None,
 ) -> int:
     print(f"[exec] {' '.join(shlex.quote(x) for x in cmd)}")
     completed = subprocess.run(cmd, env=env, stdout=stdout, stderr=stderr, text=True)
@@ -69,17 +69,17 @@ def extract_dialogue_from_json(json_file: Path, output_file: Path) -> None:
             return
         print(f"[warn] jq extraction failed: {completed.stderr.strip()}", file=sys.stderr)
 
-        # Fallback without jq
-        data = json.loads(json_file.read_text(encoding="utf-8"))
-        segments = data.get("segments") or data.get("word_segments") or []
-        
-        with output_file.open("w", encoding="utf-8") as out:
-            for seg in segments:
-                speaker = seg.get("speaker", "UNKNOWN")
-                start = seg.get("start", "")
-                end = seg.get("end", "")
-                text = seg.get("text", "")
-                out.write(f"{speaker} [{start}-{end}] {text}\n")
+    # Fallback without jq
+    data = json.loads(json_file.read_text(encoding="utf-8"))
+    segments = data.get("segments") or data.get("word_segments") or []
+
+    with output_file.open("w", encoding="utf-8") as out:
+        for seg in segments:
+            speaker = seg.get("speaker", "UNKNOWN")
+            start = seg.get("start", "")
+            end = seg.get("end", "")
+            text = seg.get("text", "")
+            out.write(f"{speaker} [{start}-{end}] {text}\n")
 
 
 def cmd_run(args: argparse.Namespace) -> int:
@@ -98,8 +98,8 @@ def cmd_run(args: argparse.Namespace) -> int:
         )
     ).expanduser().resolve()
 
-name = input_path.stem
-run_dir = base_dir / "runs" / f"{now_stamp()}_{name}"
+    name = input_path.stem
+    run_dir = base_dir / "runs" / f"{now_stamp()}_{name}"
     output_dir = run_dir / "output"
     ensure_dir(output_dir)
 
@@ -185,8 +185,8 @@ run_dir = base_dir / "runs" / f"{now_stamp()}_{name}"
         print(f"[warn] No JSON output found in {output_dir}", file=sys.stderr)
         return 0
 
-json_file = max(json_files, key=lambda p: p.stat().st_mtime)
-extract_dialogue_from_json(json_file, dialogue_path)
+    json_file = max(json_files, key=lambda p: p.stat().st_mtime)
+    extract_dialogue_from_json(json_file, dialogue_path)
 
     print(f"[done] run_dir={run_dir}")
     print(f"[done] dialogue={dialogue_path}")
