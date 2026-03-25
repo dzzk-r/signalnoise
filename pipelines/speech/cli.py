@@ -179,12 +179,13 @@ run_dir = base_dir / "runs" / f"{now_stamp()}_{name}"
         print(f"[error] whisperx failed. See log: {log_path}", file=sys.stderr)
         return completed.returncode
 
-    json_files = sorted(output_dir.glob("*.json"))
+    json_files = list(output_dir.glob("*.json"))
     if not json_files:
         print(f"[warn] No JSON output found in {output_dir}", file=sys.stderr)
         return 0
 
-    extract_dialogue_from_json(json_files[0], dialogue_path)
+json_file = max(json_files, key=lambda p: p.stat().st_mtime)
+extract_dialogue_from_json(json_file, dialogue_path)
 
     print(f"[done] run_dir={run_dir}")
     print(f"[done] dialogue={dialogue_path}")
