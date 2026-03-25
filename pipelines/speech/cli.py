@@ -1,4 +1,4 @@
-# pipelines/speech/cli.py
+# file: pipelines/speech/cli.py
 
 from __future__ import annotations
 
@@ -135,38 +135,48 @@ def cmd_run(args: argparse.Namespace) -> int:
         "1",
         str(wav_path),
     ]
-    rc = run_cmd(ffmpeg_cmd, env=env)
-    if rc != 0:
-        print("[error] ffmpeg failed", file=sys.stderr)
-        return rc
-
-    whisperx_cmd = [
-        "whisperx",
-        str(wav_path),
-        "--language",
-        args.lang,
-        "--model",
-        args.model,
-        "--device",
-        args.device,
-        "--compute_type",
-        args.compute_type,
-        "--diarize",
-        "--min_speakers",
-        str(args.speakers),
-        "--max_speakers",
-        str(args.speakers),
-        "--hf_token",
-        hf_token,
-        "--output_dir",
-        str(output_dir),
-    ]
-
-    time_cmd = ["/usr/bin/time", "-l", *whisperx_cmd]
 
     with log_path.open("w", encoding="utf-8") as log_file:
         log_file.write(f"START {datetime.now().isoformat()}\n")
         log_file.flush()
+
+        rc = subprocess.run(
+            ffmpeg_cmd,
+            env=env,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+            text=True,
+        ).returncode
+
+        if rc != 0:
+            log_file.write(f"END {datetime.now().isoformat()}\n")
+            print("[error] ffmpeg failed", file=sys.stderr)
+            return rc
+
+        whisperx_cmd = [
+            "whisperx",
+            str(wav_path),
+            "--language",
+            args.lang,
+            "--model",
+            args.model,
+            "--device",
+            args.device,
+            "--compute_type",
+            args.compute_type,
+            "--diarize",
+            "--min_speakers",
+            str(args.speakers),
+            "--max_speakers",
+            str(args.speakers),
+            "--hf_token",
+            hf_token,
+            "--output_dir",
+            str(output_dir),
+        ]
+
+        time_cmd = ["/usr/bin/time", "-l", *whisperx_cmd]
+
         completed = subprocess.run(
             time_cmd,
             env=env,
