@@ -1,0 +1,25 @@
+# runtime
+runs/
+logs/
+
+# local AI workspace
+AI/
+
+# outputs
+outputs/
+*.wav
+*.amr
+*.mp3
+*.m4a
+
+# secrets
+.secrets*
+.env
+
+# caches
+.cache/
+
+.idea/
+*.iml
+.idea/
+*.iml
